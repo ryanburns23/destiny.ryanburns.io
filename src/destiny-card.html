@@ -1,0 +1,48 @@
+<link rel="import" href="../bower_components/destiny-api/destiny-api.html">
+<dom-module id="destiny-card">
+  <template>
+    <style>
+      :host {
+        display: block;
+        margin: 0 auto;
+        max-width: 1200px;
+        padding: 20px;
+      }
+
+      .empty.false{
+        display: none;
+      }
+    </style>
+
+
+    <div class$="[[empty]] empty">
+      <h1>Please enter a username</h1>
+    </div>
+
+    <h1>[[username]]</h1>
+
+    <destiny-api user-name="[[username]]" console="2" api-key="5ade1475422c4b9f9c215599cfd108da"></destiny-api>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'destiny-card',
+      properties: {
+        username: {
+          type: String,
+          observer: 'usernameChanged'
+        },
+      },
+
+      usernameChanged: function(){
+        if (this.username == "") {
+          this.empty = true;
+        }else {
+          this.empty = false;
+        }
+      }
+
+    });
+  </script>
+</dom-module>
