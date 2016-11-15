@@ -1,0 +1,7 @@
+{
+  "name": "destiny-app",
+  "short_name": "destiny-app",
+  "description": "Destiny app on destiny.ryanburns.io ",
+  "start_url": "/",
+  "display": "standalone"
+}
