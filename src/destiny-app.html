@@ -36,7 +36,7 @@
       app-toolbar .toolbar-container{
         width: 100%;
         height: 40px;
-        max-width: 1200px;
+        max-width: 700px;
         margin: 0 auto;
       }
       app-toolbar paper-input{
@@ -89,9 +89,10 @@
         <app-toolbar>
           <div class="toolbar-container">
             <paper-input value="{{username}}" no-label-float> <div prefix> <iron-icon icon="search"></iron-icon> </div> <paper-icon-button suffix on-tap="clear" icon="close"></paper-icon-button> </paper-input>
-            <a on-tap="setUsername" href="#/burnzilla23">burnzilla23</a>
-            <a on-tap="setUsername" href="#/tekola1993">tek</a>
-            <a on-tap="setUsername" href="#/mattpio">pio</a>
+            <a on-tap="setUsername" href="#/burnzilla23">burnzilla</a>
+            <a on-tap="setUsername" href="#/RealKraftyy">krafty</a>
+            <a on-tap="setUsername" href="#/Tekola1994">tek</a>
+            <a on-tap="setUsername" href="#/MattPio">pio</a>
           </div>
         </app-toolbar>
       </app-header>
@@ -108,7 +109,6 @@
       properties: {
         username: {
           type: String,
-          value: "burnzilla23"
         },
       },
 
@@ -117,8 +117,9 @@
       ],
 
       _routePageChanged: function(username) {
-        this.username = username || "burnzilla23";
-        console.log(this.username);
+        if(this.username != username){
+          this.username = username || "burnzilla23";
+        }
       },
 
       clear: function(){

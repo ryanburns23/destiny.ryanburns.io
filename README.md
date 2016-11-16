@@ -1,6 +1,6 @@
 # \<destiny-app\>
 
-Web app on [destiny.ryanburns.io](https://destiny.ryanburns.io)
+Web app on [destiny.ryanburns.io](http://destiny.ryanburns.io)
 
 ## Install the Polymer-CLI
 

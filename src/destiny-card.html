@@ -1,16 +1,96 @@
 <link rel="import" href="../bower_components/destiny-api/destiny-api.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+
 <dom-module id="destiny-card">
   <template>
     <style>
       :host {
         display: block;
         margin: 0 auto;
-        max-width: 1200px;
+        max-width: 700px;
         padding: 20px;
       }
 
-      .empty.false{
+      .spinner.false,
+      .characters.true,
+      .empty.false,
+      .stats.true{
         display: none;
+      }
+
+
+      .characters{
+        margin-bottom: 20px;
+      }
+      .card{
+        cursor: pointer;
+        position: relative;
+        width: 100%;
+        height: 78px;
+        margin-bottom: 10px;
+        box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14),
+            0 1px 8px 0 rgba(0, 0, 0, 0.12),
+            0 3px 3px -2px rgba(0, 0, 0, 0.4);
+      }
+      .card:hover{
+        box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                    0 3px 14px 2px rgba(0, 0, 0, 0.12),
+                    0 5px 5px -3px rgba(0, 0, 0, 0.4);
+      }
+      .emblem{
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 78px;
+        height: 78px;
+      }
+      .background{
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 100%;
+        z-index: -1;
+        width: 100%;
+      }
+
+      .charDetails{
+        margin-left: 90px;
+        @apply(--layout-horizontal);
+      }
+
+      .characterHeader{
+        margin-left: 80px;
+        @apply(--layout-horizontal);
+        height: 100%;
+      }
+
+      .characterHeader{
+        margin-left: 80px;
+        @apply(--layout-horizontal);
+        height: 100%;
+        font-size: 20px;
+      }
+      .characterHeader paper-item-body [secondary]{
+        color: rgba(245, 220, 86, 1);
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 25px;
+      }
+
+      .stats paper-item-body [secondary]{
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+      }
+      paper-item{
+        --paper-item-focused-before: {
+          display: none;
+        }
       }
     </style>
 
@@ -21,7 +101,87 @@
 
     <h1>[[username]]</h1>
 
-    <destiny-api user-name="[[username]]" console="2" api-key="5ade1475422c4b9f9c215599cfd108da"></destiny-api>
+    <destiny-api
+      id="api"
+      user-name="{{username}}"
+      characters="{{characters}}"
+      loading-characters="{{loadingCharacters}}"
+      stats="{{stats}}"
+      loading-stats="{{loadingStats}}"
+      console="2"
+      api-key="5ade1475422c4b9f9c215599cfd108da">
+    </destiny-api>
+
+    <paper-spinner class$="spinner [[loadingCharacters]]" active="[[loadingCharacters]]"></paper-spinner>
+
+    <div class$="[[empty]] [[loadingCharacters]] characters">
+      <template is="dom-repeat" items="[[characters]]">
+        <div class="card">
+          <img class="emblem" src="https://www.bungie.net/[[item.emblemPath]]" alt="" />
+          <paper-item class="characterHeader">
+            <paper-item-body two-line>
+              <div>[[item.characterType]]</div>
+              <div secondary>[[item.lightLevel]]</div>
+            </paper-item-body>
+          </paper-item>
+          <img class="background" src="https://www.bungie.net/[[item.backgroundPath]]" alt="" />
+          <paper-ripple></paper-ripple>
+        </div>
+      </template>
+    </div>
+
+    <paper-spinner class$="spinner [[loadingStats]]" active="[[loadingStats]]"></paper-spinner>
+    <div class$="[[empty]] [[loadingStats]] stats">
+      <h3>All Character Stats</h3>
+      <paper-item>
+        <paper-item-body two-line>
+          <div>K/D</div>
+          <div secondary>[[stats.killsDeathsRatio.basic.displayValue]]</div>
+        </paper-item-body>
+      </paper-item>
+      <paper-item>
+        <paper-item-body two-line>
+          <div>Longest Kill Streak</div>
+          <div secondary>[[stats.longestKillSpree.basic.displayValue]]</div>
+        </paper-item-body>
+      </paper-item>
+      <paper-item>
+        <paper-item-body two-line>
+          <div>Best Weapon</div>
+          <div secondary>[[stats.weaponBestType.basic.displayValue]]</div>
+        </paper-item-body>
+      </paper-item>
+      <paper-item>
+        <paper-item-body two-line>
+          <div>Time Played</div>
+          <div secondary>[[stats.secondsPlayed.basic.displayValue]]</div>
+        </paper-item-body>
+      </paper-item>
+      <paper-item>
+        <paper-item-body two-line>
+          <div>Best Single Game Kills</div>
+          <div secondary>[[stats.bestSingleGameKills.basic.displayValue]]</div>
+        </paper-item-body>
+      </paper-item>
+      <paper-item>
+        <paper-item-body two-line>
+          <div>Best Single Game Scrore</div>
+          <div secondary>[[stats.bestSingleGameScore.basic.displayValue]]</div>
+        </paper-item-body>
+      </paper-item>
+      <paper-item>
+        <paper-item-body two-line>
+          <div>Longest Single Life</div>
+          <div secondary>[[stats.longestSingleLife.basic.displayValue]]</div>
+        </paper-item-body>
+      </paper-item>
+      <paper-item>
+        <paper-item-body two-line>
+          <div>Average Life Span</div>
+          <div secondary>[[stats.averageLifespan.basic.displayValue]]</div>
+        </paper-item-body>
+      </paper-item>
+    </div>
 
   </template>
 
@@ -33,14 +193,37 @@
           type: String,
           observer: 'usernameChanged'
         },
+        characters: {
+          type: Array,
+          observer: 'charactersChanged'
+        },
+        stats: {
+          type: Object,
+          observer: 'statsChanged'
+        },
       },
 
       usernameChanged: function(){
-        if (this.username == "") {
+        if (!this._checkEmpty()) {
+          this.$.api.generateRequest();
+        }
+      },
+
+      _checkEmpty: function(){
+        if (this.username == "" || this.username == undefined){
           this.empty = true;
+          return true;
         }else {
           this.empty = false;
+          return false;
         }
+      },
+
+      charactersChanged: function(){
+        console.log(this.characters);
+      },
+      statsChanged: function(){
+        console.log(this.stats);
       }
 
     });
