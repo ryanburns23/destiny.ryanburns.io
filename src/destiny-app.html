@@ -9,12 +9,12 @@
 <link rel="import" href="../bower_components/app-route/app-location.html">
 
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../bower_components/iron-iconset-svg/iron-iconset-svg.html">
 
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
+<link rel="import" href="my-icons.html">
 <link rel="import" href="destiny-card.html">
 
 <dom-module id="destiny-app">
@@ -22,7 +22,9 @@
     <style>
       :host {
         display: block;
-        background: #424242;
+        --app-primary-color: #7CB342;
+        --app-secondary-color: #4785c1;
+        background: #212121;
         font-family: -apple-system, BlinkMacSystemFont,
         "Segoe UI", "Roboto", "Oxygen",
         "Ubuntu", "Cantarell", "Fira Sans",
@@ -30,12 +32,10 @@
       }
 
       app-toolbar{
-        background: #212121;
-        height: 80px;
+        background: black;
       }
       app-toolbar .toolbar-container{
         width: 100%;
-        height: 40px;
         max-width: 700px;
         margin: 0 auto;
       }
@@ -65,16 +65,12 @@
       app-toolbar a:hover{
         text-decoration: underline;
       }
+      paper-progress{
+        width: 100%;
+        --paper-progress-container-color: #212121;
+        --paper-progress-active-color: var(--app-primary-color);
+      }
     </style>
-
-    <iron-iconset-svg name="icons" size="24">
-      <svg>
-        <defs>
-          <g id="search"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></g>
-          <g id="close"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></g>
-        </defs>
-      </svg>
-    </iron-iconset-svg>
 
     <app-location use-hash-as-path route="{{route}}"></app-location>
     <app-route
@@ -88,16 +84,20 @@
       <app-header reveals condenses effects="waterfall">
         <app-toolbar>
           <div class="toolbar-container">
-            <paper-input value="{{username}}" no-label-float> <div prefix> <iron-icon icon="search"></iron-icon> </div> <paper-icon-button suffix on-tap="clear" icon="close"></paper-icon-button> </paper-input>
+            <!-- <paper-input value="{{username}}" no-label-float> <div prefix> <iron-icon icon="search"></iron-icon> </div> <paper-icon-button suffix on-tap="clear" icon="close"></paper-icon-button> </paper-input>  -->
             <a on-tap="setUsername" href="#/burnzilla23">burnzilla</a>
             <a on-tap="setUsername" href="#/RealKraftyy">krafty</a>
             <a on-tap="setUsername" href="#/Tekola1994">tek</a>
             <a on-tap="setUsername" href="#/MattPio">pio</a>
           </div>
+          <paper-progress hidden$="[[!loading]]" indeterminate bottom-item></paper-progress>
         </app-toolbar>
       </app-header>
 
-      <destiny-card username="[[username]]"></destiny-card>
+      <destiny-card
+        username="[[username]]"
+        loading="{{loading}}">
+      </destiny-card>
 
     </app-header-layout>
 
@@ -109,6 +109,10 @@
       properties: {
         username: {
           type: String,
+        },
+        loading: {
+          type: Boolean,
+          value: true,
         },
       },
 

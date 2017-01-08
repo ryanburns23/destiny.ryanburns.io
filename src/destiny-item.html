@@ -1,0 +1,34 @@
+<dom-module id="destiny-item">
+  <template>
+    <style>
+      :host{
+        padding: 16px;
+        margin-right: 8px;
+        margin-top: 8px;
+        background: #323232;
+        @apply(--shadow-elevation-2dp);
+      }
+      [light]{
+        background: #404040;
+      }
+      :host .title{
+        font-weight: lighter;
+        opacity: .7;
+        margin-bottom: 5px;
+      }
+      :host .value{
+        font-weight: bold;
+        color: var(--app-secondary-color);
+      }
+    </style>
+
+    <div class="title">[[itemTitle]]</div>
+    <div class="value">[[itemValue]]</div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'destiny-item',
+    });
+  </script>
+</dom-module>

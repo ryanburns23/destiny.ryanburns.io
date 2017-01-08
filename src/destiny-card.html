@@ -1,8 +1,14 @@
-<link rel="import" href="../bower_components/destiny-api/destiny-api.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+
+<link rel="import" href="../bower_components/destiny-api/destiny-api.html">
+
+<link rel="import" href="destiny-item.html">
+<link rel="import" href="destiny-activity-list.html">
 
 <dom-module id="destiny-card">
   <template>
@@ -10,35 +16,30 @@
       :host {
         display: block;
         margin: 0 auto;
-        max-width: 700px;
+        max-width: 600px;
         padding: 20px;
       }
 
-      .spinner.false,
-      .characters.true,
+      h1{
+        color: var(--app-primary-color);
+        text-align: center;
+      }
+
       .empty.false,
       .stats.true{
         display: none;
       }
 
-
-      .characters{
-        margin-bottom: 20px;
-      }
       .card{
         cursor: pointer;
         position: relative;
         width: 100%;
         height: 78px;
-        margin-bottom: 10px;
-        box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14),
-            0 1px 8px 0 rgba(0, 0, 0, 0.12),
-            0 3px 3px -2px rgba(0, 0, 0, 0.4);
+        margin-top: 10px;
+        @apply(--shadow-elevation-2dp);
       }
       .card:hover{
-        box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14),
-                    0 3px 14px 2px rgba(0, 0, 0, 0.12),
-                    0 5px 5px -3px rgba(0, 0, 0, 0.4);
+        @apply(--shadow-elevation-4dp);
       }
       .emblem{
         position: absolute;
@@ -48,27 +49,16 @@
         height: 78px;
       }
       .background{
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        @apply(--layout-fit);
         height: 100%;
-        z-index: -1;
         width: 100%;
+        z-index: -1;
       }
 
       .charDetails{
         margin-left: 90px;
         @apply(--layout-horizontal);
       }
-
-      .characterHeader{
-        margin-left: 80px;
-        @apply(--layout-horizontal);
-        height: 100%;
-      }
-
       .characterHeader{
         margin-left: 80px;
         @apply(--layout-horizontal);
@@ -82,18 +72,59 @@
         line-height: 25px;
       }
 
-      .stats paper-item-body [secondary]{
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
-      }
       paper-item{
         --paper-item-focused-before: {
           display: none;
         }
       }
+
+
+      paper-item.activity{
+      }
+
+      .center{
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+      }
+
+      .items{
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        @apply(--layout-wrap);
+        margin-bottom: 10px;
+      }
+
+      .characters .item{
+        background: #404040;
+      }
+
+      [hidden]{
+        display: none;
+      }
+      .collapse-content {
+        padding: 15px;
+        background: #323232;
+        @apply(--shadow-elevation-4dp);
+      }
+
+      h3{
+        text-align: center;
+        font-weight: normal;
+      }
+      .stats{
+        margin-top: 20px;
+      }
     </style>
 
+    <destiny-api
+      id="api"
+      user-name="{{username}}"
+      console="2"
+      api-key="3a9c87c7c62446b192f2b98b8d9f8f3e"
+      response="{{data}}"
+      loading-characters="{{loading}}"
+      loading-stats="{{loadingStats}}">
+    </destiny-api>
 
     <div class$="[[empty]] empty">
       <h1>Please enter a username</h1>
@@ -101,87 +132,54 @@
 
     <h1>[[username]]</h1>
 
-    <destiny-api
-      id="api"
-      user-name="{{username}}"
-      characters="{{characters}}"
-      loading-characters="{{loadingCharacters}}"
-      stats="{{stats}}"
-      loading-stats="{{loadingStats}}"
-      console="2"
-      api-key="5ade1475422c4b9f9c215599cfd108da">
-    </destiny-api>
+    <template is="dom-if" if="[[!empty]]">
+      <div hidden$="[[loading]]" class="characters">
+        <template is="dom-repeat" items="[[data.characters]]">
+          <div on-tap="toggle" class="card">
+            <paper-item class="characterHeader">
+              <paper-item-body two-line>
+                <div>[[item.characterType]]</div>
+                <div secondary>[[item.lightLevel]]</div>
+              </paper-item-body>
+              [[item.stats.pvp.killsDeathsRatio.basic.displayValue]]
+              <iron-icon id="charIcon[[index]]" icon="arrow-drop-down"></iron-icon>
+            </paper-item>
+            <img class="emblem" src="https://www.bungie.net/[[item.emblemPath]]" alt="" />
+            <img class="background" src="https://www.bungie.net/[[item.backgroundPath]]" alt="" />
+            <paper-ripple></paper-ripple>
+          </div>
+          <iron-collapse id="char[[index]]">
+            <div class="collapse-content">
+              <h3>Trials of Osiris</h3>
+              <div class="items">
+                <destiny-item light item-title="K/D" item-value="[[item.stats.trials.killsDeathsRatio.basic.displayValue]]"></destiny-item>
+                <destiny-item light item-title="Best Weapon" item-value="[[item.stats.trials.weaponBestType.basic.displayValue]]"></destiny-item>
+                <destiny-item light item-title="Win Loss Ratio" item-value="[[item.stats.trials.winLossRatio.basic.displayValue]]"></destiny-item>
+              </div>
+              <h3>Recent Matches</h3>
+              <destiny-activity-list items="[[item.activity.trials]]"></destiny-activity-list>
+            </div>
+          </iron-collapse>
+        </template>
+      </div>
 
-    <paper-spinner class$="spinner [[loadingCharacters]]" active="[[loadingCharacters]]"></paper-spinner>
-
-    <div class$="[[empty]] [[loadingCharacters]] characters">
-      <template is="dom-repeat" items="[[characters]]">
-        <div class="card">
-          <img class="emblem" src="https://www.bungie.net/[[item.emblemPath]]" alt="" />
-          <paper-item class="characterHeader">
-            <paper-item-body two-line>
-              <div>[[item.characterType]]</div>
-              <div secondary>[[item.lightLevel]]</div>
-            </paper-item-body>
-          </paper-item>
-          <img class="background" src="https://www.bungie.net/[[item.backgroundPath]]" alt="" />
-          <paper-ripple></paper-ripple>
+      <div class="stats">
+        <div class="center">
+          <paper-spinner hidden$="[[!loadingStats]]" active="[[loadingStats]]"></paper-spinner>
         </div>
-      </template>
-    </div>
 
-    <paper-spinner class$="spinner [[loadingStats]]" active="[[loadingStats]]"></paper-spinner>
-    <div class$="[[empty]] [[loadingStats]] stats">
-      <h3>All Character Stats</h3>
-      <paper-item>
-        <paper-item-body two-line>
-          <div>K/D</div>
-          <div secondary>[[stats.killsDeathsRatio.basic.displayValue]]</div>
-        </paper-item-body>
-      </paper-item>
-      <paper-item>
-        <paper-item-body two-line>
-          <div>Longest Kill Streak</div>
-          <div secondary>[[stats.longestKillSpree.basic.displayValue]]</div>
-        </paper-item-body>
-      </paper-item>
-      <paper-item>
-        <paper-item-body two-line>
-          <div>Best Weapon</div>
-          <div secondary>[[stats.weaponBestType.basic.displayValue]]</div>
-        </paper-item-body>
-      </paper-item>
-      <paper-item>
-        <paper-item-body two-line>
-          <div>Time Played</div>
-          <div secondary>[[stats.secondsPlayed.basic.displayValue]]</div>
-        </paper-item-body>
-      </paper-item>
-      <paper-item>
-        <paper-item-body two-line>
-          <div>Best Single Game Kills</div>
-          <div secondary>[[stats.bestSingleGameKills.basic.displayValue]]</div>
-        </paper-item-body>
-      </paper-item>
-      <paper-item>
-        <paper-item-body two-line>
-          <div>Best Single Game Scrore</div>
-          <div secondary>[[stats.bestSingleGameScore.basic.displayValue]]</div>
-        </paper-item-body>
-      </paper-item>
-      <paper-item>
-        <paper-item-body two-line>
-          <div>Longest Single Life</div>
-          <div secondary>[[stats.longestSingleLife.basic.displayValue]]</div>
-        </paper-item-body>
-      </paper-item>
-      <paper-item>
-        <paper-item-body two-line>
-          <div>Average Life Span</div>
-          <div secondary>[[stats.averageLifespan.basic.displayValue]]</div>
-        </paper-item-body>
-      </paper-item>
-    </div>
+        <div hidden$="[[loadingStats]]" class="items">
+          <destiny-item item-title="K/D" item-value="[[data.stats.pvp.killsDeathsRatio.basic.displayValue]]"></destiny-item>
+          <destiny-item item-title="Best Kill Streak" item-value="[[data.stats.pvp.bestSingleGameKills.basic.displayValue]]"></destiny-item>
+          <destiny-item item-title="Best Weapon" item-value="[[data.stats.pvp.weaponBestType.basic.displayValue]]"></destiny-item>
+          <destiny-item item-title="Best Single Game Kills" item-value="[[data.stats.pvp.longestKillSpree.basic.displayValue]]"></destiny-item>
+          <destiny-item item-title="Time Played" item-value="[[data.stats.pvp.secondsPlayed.basic.displayValue]]"></destiny-item>
+          <destiny-item item-title="Average Life Span" item-value="[[data.stats.pvp.averageLifespan.basic.displayValue]]"></destiny-item>
+        </div>
+      </div>
+    </template>
+
+
 
   </template>
 
@@ -197,9 +195,9 @@
           type: Array,
           observer: 'charactersChanged'
         },
-        stats: {
-          type: Object,
-          observer: 'statsChanged'
+        loading: {
+          type: Boolean,
+          notify: true
         },
       },
 
@@ -209,6 +207,23 @@
         }
       },
 
+      toggle: function(e){
+
+        var index = e.model.__data__.index;
+        this._setToggleIcon(index);
+
+        this.$$("#char"+index).toggle();
+
+      },
+
+      _setToggleIcon: function(index){
+        var icon = this.$$("#charIcon"+index).icon;
+        if (icon == "arrow-drop-up") {
+          this.$$("#charIcon"+index).icon = "arrow-drop-down";
+        }else {
+          this.$$("#charIcon"+index).icon = "arrow-drop-up";
+        }
+      },
       _checkEmpty: function(){
         if (this.username == "" || this.username == undefined){
           this.empty = true;

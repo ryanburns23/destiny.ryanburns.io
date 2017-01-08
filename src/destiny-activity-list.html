@@ -1,0 +1,60 @@
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<script src="../bower_components/moment/min/moment.min.js"></script>
+
+<dom-module id="destiny-activity-list">
+  <template>
+    <style>
+      :host{
+        display: block;
+        margin: 0 auto;
+        max-width: 450px;
+      }
+      paper-icon-item{
+        --paper-item-icon-width: 45px;
+        cursor: pointer;
+      }
+      paper-icon-item:hover{
+        background: #404040;
+      }
+      paper-icon-item [secondary]{
+        color: white;
+        opacity: .7
+      }
+      .kills{
+      }
+      .deaths{
+        opacity: .8;
+      }
+
+      iron-icon{
+
+      }
+      iron-icon[result="Victory"]{
+        color: var(--app-primary-color);
+      }
+      iron-icon[result="Defeat"]{
+        color: red;
+      }
+    </style>
+
+    <template is="dom-repeat" items="[[items]]">
+      <paper-icon-item class="activity">
+        <iron-icon result$="[[item.values.standing.basic.displayValue]]" icon="[[item.values.standing.basic.displayValue]]" item-icon></iron-icon>
+        <paper-item-body two-line>
+          <div><span class="kills">[[item.values.kills.basic.displayValue]]</span> / <span class="deaths">[[item.values.deaths.basic.displayValue]]</span></div>
+          <div secondary>[[_formatDate(item.period)]]</div>
+        </paper-item-body>
+        [[item.values.killsDeathsRatio.basic.displayValue]]
+      </paper-icon-item>
+    </template>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'destiny-activity-list',
+      _formatDate: function(date){
+        return moment(date).format('ddd - MMM Do, h:mm a');
+      },
+    });
+  </script>
+</dom-module>

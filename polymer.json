@@ -1,0 +1,12 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/destiny-app.html",
+  "sourceGlobs": [
+   "src/**/*",
+   "bower.json"
+  ],
+  "includeDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+  ]
+}
