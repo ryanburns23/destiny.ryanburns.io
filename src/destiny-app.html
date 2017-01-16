@@ -13,6 +13,7 @@
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 
 <link rel="import" href="my-icons.html">
 <link rel="import" href="destiny-card.html">
@@ -60,16 +61,24 @@
         font-size: 16px;
         text-decoration: none;
         color: white;
-        margin-right: 20px;
       }
       app-toolbar a:hover{
         text-decoration: underline;
       }
-      paper-progress{
-        width: 100%;
-        --paper-progress-container-color: #212121;
-        --paper-progress-active-color: var(--app-primary-color);
+
+      paper-tabs{
+        max-width: 600px;
+        margin: 0 auto;
+        height: 100%;
       }
+      paper-tab[link] a {
+        padding: 0 8px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        text-decoration: none;
+        outline: none;
+      }
+
     </style>
 
     <app-location use-hash-as-path route="{{route}}"></app-location>
@@ -83,14 +92,22 @@
     <app-header-layout>
       <app-header reveals condenses effects="waterfall">
         <app-toolbar>
-          <div class="toolbar-container">
-            <!-- <paper-input value="{{username}}" no-label-float> <div prefix> <iron-icon icon="search"></iron-icon> </div> <paper-icon-button suffix on-tap="clear" icon="close"></paper-icon-button> </paper-input>  -->
-            <a on-tap="setUsername" href="#/burnzilla23">burnzilla</a>
-            <a on-tap="setUsername" href="#/RealKraftyy">krafty</a>
-            <a on-tap="setUsername" href="#/Tekola1994">tek</a>
-            <a on-tap="setUsername" href="#/MattPio">pio</a>
-          </div>
-          <paper-progress hidden$="[[!loading]]" indeterminate bottom-item></paper-progress>
+          <paper-icon-button icon="destiny"></paper-icon-button>
+
+          <paper-tabs attr-for-selected="name" selected="{{username}}">
+            <paper-tab link name="burnzilla23">
+              <a href="#/burnzilla23" tabindex="-1">burnzilla</a>
+            </paper-tab>
+            <paper-tab link name="Tekola1994">
+              <a href="#/Tekola1994" tabindex="-1">Tek</a>
+            </paper-tab>
+            <paper-tab link name="MattPio">
+              <a href="#/MattPio" tabindex="-1">Pio</a>
+            </paper-tab>
+            <paper-tab link name="RealKraftyy">
+              <a href="#/RealKraftyy" tabindex="-1">Kraftyy</a>
+            </paper-tab>
+          </paper-tabs>
         </app-toolbar>
       </app-header>
 
@@ -112,7 +129,7 @@
         },
         loading: {
           type: Boolean,
-          value: true,
+          value: false,
         },
       },
 

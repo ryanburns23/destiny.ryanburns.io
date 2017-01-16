@@ -38,7 +38,7 @@
     </style>
 
     <template is="dom-repeat" items="[[items]]">
-      <paper-icon-item class="activity">
+      <paper-icon-item on-tap="itemClicked" class="activity">
         <iron-icon result$="[[item.values.standing.basic.displayValue]]" icon="[[item.values.standing.basic.displayValue]]" item-icon></iron-icon>
         <paper-item-body two-line>
           <div><span class="kills">[[item.values.kills.basic.displayValue]]</span> / <span class="deaths">[[item.values.deaths.basic.displayValue]]</span></div>
@@ -52,8 +52,19 @@
   <script>
     Polymer({
       is: 'destiny-activity-list',
+      properties: {
+        selected: {
+          type: String,
+          notify: true
+        }
+      },
       _formatDate: function(date){
         return moment(date).format('ddd - MMM Do, h:mm a');
+      },
+      itemClicked: function(e){
+        id = e.model.__data__.item.activityDetails.instanceId;
+        console.log(id);
+        this.selected = id;
       },
     });
   </script>
