@@ -1,0 +1,60 @@
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="paper-table.html">
+<dom-module id="destiny-activity">
+  <template>
+    <style include="shared-styles">
+      :host{
+        display: block;
+      }
+      paper-icon-item{
+        padding: 0;
+        --paper-item-icon-width: 60px;
+      }
+      .emblem{
+        height: 50px;
+        width: 50px;
+      }
+    </style>
+
+    <h2>Trials Of Osiris</h2>
+    <h2>[[_formatDate(data.period)]]</h2>
+
+
+    <h2>Alpha - </h2>
+    <paper-table items="[[alpha]]"></paper-table>
+
+    <h2>Bravo - </h2>
+    <paper-table items="[[bravo]]"></paper-table>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'destiny-activity',
+
+      properties: {
+        data: {
+          type: Object,
+          observer: "dataChanged"
+        }
+      },
+      dataChanged: function(data){
+        if (this.data) {
+          var alpha = [];
+          alpha.push( data.entries[0] );
+          alpha.push( data.entries[1] );
+          alpha.push( data.entries[2] );
+          this.set("alpha", alpha);
+
+          var bravo = [];
+          bravo.push( data.entries[3] );
+          bravo.push( data.entries[4] );
+          bravo.push( data.entries[5] );
+          this.set("bravo", bravo);
+        }
+      },
+      _formatDate: function(date){
+        return moment(date).format('ddd - MMM Do, h:mm a');
+      },
+    });
+  </script>
+</dom-module>

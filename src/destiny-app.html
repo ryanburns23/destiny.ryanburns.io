@@ -11,16 +11,22 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
 
 <link rel="import" href="my-icons.html">
+<link rel="import" href="shared-styles.html">
 <link rel="import" href="destiny-card.html">
+<link rel="import" href="destiny-activity.html">
 
 <dom-module id="destiny-app">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: block;
         --app-primary-color: #7CB342;
@@ -67,7 +73,8 @@
       }
 
       paper-tabs{
-        max-width: 600px;
+        width: 100%;
+        max-width: 450px;
         margin: 0 auto;
         height: 100%;
       }
@@ -79,6 +86,36 @@
         outline: none;
       }
 
+      /* Thanks Polymer - https://github.com/Polymer/docs/blob/master/app/elements/pw-shell.html#L120 */
+      .search-box {
+        outline-color: var(--app-primary-color);
+        background: #323232;
+        color: white;
+        width: 100%;
+        height: 100%;
+        padding: 0 12px;
+        font-size: 16px;
+        border: none;
+        box-sizing: border-box;
+        -webkit-transform: translate3d(100%, 0, 0);
+        transform: translate3d(100%, 0, 0);
+        transition: -webkit-transform 0.2s;
+        transition: transform 0.2s;
+        @apply(--layout-fit);
+      }
+      .search-box:focus {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+      }
+
+      #activityDialog {
+        background: #323232;
+        color: white;
+        max-width: 600px;
+        width: 100%;
+        height: 90%;
+        overflow: scroll;
+      }
     </style>
 
     <app-location use-hash-as-path route="{{route}}"></app-location>
@@ -89,14 +126,19 @@
       tail="{{subroute}}">
     </app-route>
 
-    <app-header-layout>
-      <app-header reveals condenses effects="waterfall">
-        <app-toolbar>
-          <paper-icon-button icon="destiny"></paper-icon-button>
+    <paper-dialog id="activityDialog" with-backdrop opened="{{opened}}">
+      <destiny-activity hidden$="[[loadingActivity]]" data="[[activity]]"></destiny-activity>
+      <paper-spinner hidden$="[[!loadingActivity]]" active="[[loadingActivity]]"></paper-spinner>
+    </paper-dialog>
 
-          <paper-tabs attr-for-selected="name" selected="{{username}}">
+    <app-header-layout>
+      <app-header reveals snaps shadow>
+        <app-toolbar>
+          <a href="/#/"><paper-icon-button icon="destiny"></paper-icon-button></a>
+
+          <paper-tabs hidden$="[[searchActive]]" attr-for-selected="name" selected="{{username}}">
             <paper-tab link name="burnzilla23">
-              <a href="#/burnzilla23" tabindex="-1">burnzilla</a>
+              <a href="#/burnzilla23" tabindex="-1">Zilla</a>
             </paper-tab>
             <paper-tab link name="Tekola1994">
               <a href="#/Tekola1994" tabindex="-1">Tek</a>
@@ -104,17 +146,36 @@
             <paper-tab link name="MattPio">
               <a href="#/MattPio" tabindex="-1">Pio</a>
             </paper-tab>
+            <paper-tab link name="OctobersKing5">
+              <a href="#/OctobersKing5" tabindex="-1">New Ju</a>
+            </paper-tab>
             <paper-tab link name="RealKraftyy">
               <a href="#/RealKraftyy" tabindex="-1">Kraftyy</a>
             </paper-tab>
           </paper-tabs>
+          <paper-icon-button hidden$="[[searchActive]]" tabindex="-1" on-tap="search" icon="search"></paper-icon-button>
         </app-toolbar>
+
+        <label aria-hidden id="searchLabel" hidden>Search PSN Name</label>
+        <input id="searchBox" on-change="_onSearchInputChange" type="search" class="search-box fit" placeholder="PSN Name - Case sensitive" aria-labelledby="searchLabel">
       </app-header>
 
-      <destiny-card
-        username="[[username]]"
-        loading="{{loading}}">
-      </destiny-card>
+      <template is="dom-if" if="[[!empty]]">
+        <destiny-card
+          opened="{{opened}}"
+          loading-activity="{{loadingActivity}}"
+          activity="{{activity}}"
+          username="[[username]]"
+          loading="{{loading}}">
+        </destiny-card>
+      </template>
+
+      <div hidden$="[[!empty]]" class="empty">
+        <h1>Enter a username</h1>
+        <div class="center">
+          <paper-button on-tap="search" raised>Seach</paper-button>
+        </div>
+      </div>
 
     </app-header-layout>
 
@@ -127,9 +188,17 @@
         username: {
           type: String,
         },
+        empty: {
+          type: Boolean,
+          computed: "_isUsernameEmpty(username)"
+        },
         loading: {
           type: Boolean,
           value: false,
+        },
+        searchActive: {
+          type: Boolean,
+          value: false
         },
       },
 
@@ -137,18 +206,29 @@
         '_routePageChanged(routeData.username)'
       ],
 
+
+      search: function(){
+        this.$.searchBox.focus();
+      },
+      _onSearchInputChange: function(){
+        this.username = this.$.searchBox.value;
+        this.set('route.path', "/"+this.$.searchBox.value+"/");
+      },
+
       _routePageChanged: function(username) {
         if(this.username != username){
-          this.username = username || "burnzilla23";
+          this.username = username;
         }
       },
 
-      clear: function(){
-        this.username = '';
+      _isUsernameEmpty: function(username){
+        if (username == "" || username == undefined){
+          this.loading = false;
+          return true;
+        }else {
+          return false;
+        }
       },
-      setUsername: function(){
-        this.username = this.routeData.username;
-      }
 
     });
   </script>

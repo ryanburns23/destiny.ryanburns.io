@@ -6,8 +6,6 @@
     <style>
       :host{
         display: block;
-        margin: 0 auto;
-        max-width: 450px;
       }
       paper-icon-item{
         --paper-item-icon-width: 45px;
@@ -35,18 +33,59 @@
       iron-icon[result="Defeat"]{
         color: red;
       }
+
+      brainy-td{
+        cursor: pointer;
+        position: relative;
+      }
+      .row{
+        width: 100%;
+        @apply(--layout-fit);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        padding-left: 24px;
+      }
+
     </style>
 
-    <template is="dom-repeat" items="[[items]]">
-      <paper-icon-item on-tap="itemClicked" class="activity">
-        <iron-icon result$="[[item.values.standing.basic.displayValue]]" icon="[[item.values.standing.basic.displayValue]]" item-icon></iron-icon>
-        <paper-item-body two-line>
-          <div><span class="kills">[[item.values.kills.basic.displayValue]]</span> / <span class="deaths">[[item.values.deaths.basic.displayValue]]</span></div>
-          <div secondary>[[_formatDate(item.period)]]</div>
-        </paper-item-body>
-        [[item.values.killsDeathsRatio.basic.displayValue]]
-      </paper-icon-item>
-    </template>
+    <brainy-table id="table" items="[[items]]">
+      <brainy-table-column width="50px" flex="0" name="Result" sort-by="values.standing.basic.displayValue">
+        <template>
+          <div class="row" on-tap="tableTapped">
+            <iron-icon result$="[[item.values.standing.basic.displayValue]]" icon="[[item.values.standing.basic.displayValue]]" item-icon></iron-icon>
+          </div>
+        </template>
+      </brainy-table-column>
+      <brainy-table-column width="50px" flex="0" name="Kills" sort-by="values.kills.basic.value">
+        <template>
+          <div class="row" on-tap="tableTapped">
+            [[item.values.kills.basic.displayValue]]
+          </div>
+        </template>
+      </brainy-table-column>
+      <brainy-table-column width="50px" flex="0" name="Deaths" sort-by="values.deaths.basic.value">
+        <template>
+          <div class="row" on-tap="tableTapped">
+            [[item.values.deaths.basic.displayValue]]
+          </div>
+        </template>
+      </brainy-table-column>
+      <brainy-table-column width="50px" flex="0" name="Assists" sort-by="values.assists.basic.value">
+        <template>
+          <div class="row" on-tap="tableTapped">
+            [[item.values.assists.basic.displayValue]]
+          </div>
+        </template>
+      </brainy-table-column>
+      <brainy-table-column flex="1" name="K/D" sort-by="values.killsDeathsRatio.basic.value">
+        <template>
+          <div class="row" on-tap="tableTapped">
+            [[item.values.killsDeathsRatio.basic.displayValue]]
+          </div>
+        </template>
+      </brainy-table-column>
+    </brainy-table>
+
 
   </template>
   <script>
@@ -58,14 +97,17 @@
           notify: true
         }
       },
+
+
+      tableTapped: function(e){
+        this.selected = e.model.__data__.item.activityDetails.instanceId
+        console.log(this.selected);
+
+      },
       _formatDate: function(date){
         return moment(date).format('ddd - MMM Do, h:mm a');
       },
-      itemClicked: function(e){
-        id = e.model.__data__.item.activityDetails.instanceId;
-        console.log(id);
-        this.selected = id;
-      },
+
     });
   </script>
 </dom-module>

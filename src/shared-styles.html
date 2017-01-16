@@ -1,0 +1,25 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="shared-styles">
+  <template>
+    <style>
+    [hidden]{
+      display: none !important;
+    }
+
+    .center{
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+    }
+
+    h3{
+      text-align: center;
+      font-weight: normal;
+    }
+    h1{
+      color: var(--app-primary-color);
+      text-align: center;
+    }
+    </style>
+  </template>
+</dom-module>

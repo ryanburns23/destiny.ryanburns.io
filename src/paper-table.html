@@ -1,0 +1,58 @@
+<link rel="import" href="../bower_components/brainy-table/brainy-table.html">
+<dom-module id="paper-table">
+  <template>
+    <style>
+      :host{
+        display: block;
+      }
+      brainy-td{
+        padding: 0;
+      }
+      span{
+        margin-left: 24px;
+        display: block;
+        width: 100%;
+      }
+      .emblem{
+        height: 50px;
+        width: 50px;
+        margin-right: 10px;
+      }
+    </style>
+
+    <brainy-table items="[[items]]">
+      <brainy-table-column width="120px" flex="1" name="Name" sort-by="player.destinyUserInfo.displayName">
+        <template>
+          <img item-icon class="emblem" src="https://www.bungie.net/[[item.player.destinyUserInfo.iconPath]]" alt="" />
+          [[item.player.destinyUserInfo.displayName]]
+        </template>
+      </brainy-table-column>
+      <brainy-table-column width="8px" name="Kills" sort-by="values.kills.basic.displayValue">
+        <template>
+          <span>[[item.values.kills.basic.displayValue]]</span>
+        </template>
+      </brainy-table-column>
+      <brainy-table-column width="8px" name="Deaths" sort-by="values.deaths.basic.displayValue">
+        <template>
+          <span>[[item.values.deaths.basic.displayValue]]</span>
+        </template>
+      </brainy-table-column>
+      <brainy-table-column width="5px" name="Assists" sort-by="values.assists.basic.displayValue">
+        <template>
+          <span>[[item.values.assists.basic.displayValue]]</span>
+        </template>
+      </brainy-table-column>
+      <brainy-table-column width="5px" name="K/D" sort-by="values.killsDeathsRatio.basic.displayValue">
+        <template>
+          <span>[[item.values.killsDeathsRatio.basic.displayValue]]</span>
+        </template>
+      </brainy-table-column>
+    </brainy-table>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'paper-table',
+    });
+  </script>
+</dom-module>
